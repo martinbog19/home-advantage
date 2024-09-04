@@ -19,12 +19,12 @@ league_codes = {'Premier League': 9}
 
 def scrape_league_games(league) :
 
-    years = np.arange(2001, 2024 + 1)
+    years = np.arange(1996, 2024 + 1)
     dfs = []
     for year in years :
   
         print(f'Scraping {league} games... {year-1}-{year}...          ', end = '\r')
-        time.sleep(3)
+        time.sleep(5)
         url = f'https://fbref.com/en/comps/{league_codes.get(league)}/{year-1}-{year}/schedule/'
         page = requests.get(url)
         soup = BeautifulSoup(page.content, 'lxml')
@@ -39,12 +39,11 @@ def scrape_league_games(league) :
         games['Away_W'] = (games['G_home'] < games['G_away']).astype(int)
         games['League'] = league
         games['Year'] = year
-        games = games[['Year', 'League', 'Wk', 'Date', 'Time', 'Home', 'Away', 'G_home', 'G_away', 'Home_W', 'Draw', 'Away_W', 'Venue', 'Attendance']]
+        games = games[['Year', 'League', 'Date', 'Time', 'Home', 'Away', 'G_home', 'G_away', 'Home_W', 'Draw', 'Away_W', 'Venue', 'Attendance']]
         dfs.append(games)
     
     output = pd.concat(dfs)
-    output.to_csv('data/' + league.replace(' ', '-') + '_' + str(year-1) + '-' + str(year) + '.csv', index = None)
-
+    output.to_csv('data/' + league.replace(' ', '-') + '_' + str(min(years)-1) + '-' + str(year) + '.csv', index = None)
 
 
 for league in league_codes.keys() :
